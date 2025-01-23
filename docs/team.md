@@ -7,7 +7,7 @@ title:  Team
 
 
 ## Meena Mynampati
-***UCI NET ID***: mmynamap
+mmynampa
 
 ## USER 2
 ***UCI Net ID***: ucinetid2
