@@ -4,12 +4,12 @@ title: Proposal
 ---
 
 
-##Summary of the Project
+## Summary of the Project
 
-##AI/ML Algorithms
+## AI/ML Algorithms
 
-##Evaluation Plan
+## Evaluation Plan
 
-#Meet the Instructor
+## Meet the Instructor
 
-##AI Tool Usage
+## AI Tool Usage
