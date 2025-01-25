@@ -14,6 +14,6 @@ We will train the agent using PPO with a convolutional neural network for object
 
 
 ## Meet the Instructor
-
+January 28th - 12:30 PM
 
 ## AI Tool Usage
