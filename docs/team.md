@@ -3,14 +3,14 @@ layout: default
 title:  Team
 ---
 
-# {{ page.title }}
+# Team Members
 
 
 ## Meena Mynampati
-mmynampa
+***UCI Net ID***: mmynampa
 
-## USER 2
-***UCI Net ID***: ucinetid2
+## Jason Chang
+***UCI Net ID***: jasoc18
 
-## USER 3
-***UCI Net ID***: ucinetid3
+## Alec David Rutledge
+***UCI Net ID***: adrutled
