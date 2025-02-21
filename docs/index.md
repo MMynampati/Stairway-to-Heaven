@@ -1,14 +1,18 @@
----
-layout: default
-title:  Home
----
+<div class="hero">
+  <h1>Stairway to Heaven</h1>
+  <p class="subtitle">An AI agent trained to navigate obstacle towers</p>
+</div>
 
-Source code: https://github.com/MMynampati/Dungeon-Crawler
+## Project Overview
+[Your existing content...]
 
-Reports:
+<div class="cta-buttons">
+  <a href="https://github.com/MMynampati/Dungeon-Crawler" class="btn">View Source</a>
+  <a href="https://mmynampati.github.io/Dungeon-Crawler/proposal" class="btn">Read Proposal</a>
+</div>
 
+## Reports
 - [Proposal](https://mmynampati.github.io/Dungeon-Crawler/proposal)
-- [Status](status.html)
-- [Final](final.html)
+- [Status Report](status.html)
+- [Final Report](final.html)
 - [Team](https://mmynampati.github.io/Dungeon-Crawler/team)
-
