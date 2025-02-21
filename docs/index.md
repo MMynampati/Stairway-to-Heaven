@@ -15,7 +15,7 @@ Stairway to Heaven is an AI agent that seeks to quickly and efficiently navigate
 </div>
 
 ## Reports
-- [Proposal](https://mmynampati.github.io/Dungeon-Crawler/proposal)
-- [Status Report](status.html)
+- [Proposal](https://mmynampati.github.io/Stairway-to-Heaven/proposal)
+- [Status Report](https://mmynampati.github.io/Stairway-to-Heaven/status)
 - [Final Report](final.html)
-- [Team](https://mmynampati.github.io/Dungeon-Crawler/team)
+- [Team](https://mmynampati.github.io/Stairway-to-Heaven/team)
