@@ -4,7 +4,8 @@ title: Status
 ---
 
 ##Video Status Update
-{% include youtube.html id="h71mvIvB5wg" %}
+<iframe width="560" height="315" src="https://www.youtube.com/embed/h71mvIvB5wg" frameborder="0" allowfullscreen></iframe>
+
 
 
 ## Project Summary
