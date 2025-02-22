@@ -11,7 +11,6 @@ Stairway to Heaven is an AI agent that seeks to quickly and efficiently navigate
 
 <div class="cta-buttons">
   <a href="https://github.com/MMynampati/Dungeon-Crawler" class="btn">View Source</a>
-  <a href="https://mmynampati.github.io/Dungeon-Crawler/proposal" class="btn">Read Proposal</a>
 </div>
 
 ## Reports
