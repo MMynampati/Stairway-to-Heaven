@@ -81,3 +81,9 @@ Lastly, in large part due to the challenges above and spending some time rethink
 - [Obstacle Tower Environment](https://github.com/Unity-Technologies/obstacle-tower-env)
 - [Obstacle Tower Research Paper](https://arxiv.org/abs/1902.01378)
 - [Obstacle Tower Evaluation Code](https://github.com/Unity-Technologies/obstacle-tower-env/blob/master/examples/evaluation.py)
+
+
+<a href="https://mmynampati.github.io/Stairway-to-Heaven/" style="background-color: #4CAF50; color: white; padding: 10px 20px; border-radius: 5px; text-decoration: none; display: inline-block;">
+  Return to Main Page
+</a>
+
