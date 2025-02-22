@@ -3,6 +3,10 @@ layout: default
 title: Status
 ---
 
+##Video Status Update
+{% include youtube.html id="h71mvIvB5wg" %}
+
+
 ## Project Summary
 The mission of our project is to create an AI model that trains an agent to navigate a multi-floor obstacle tower by solving puzzles to find the exit to proceed through the various floors. The obstacles that the agent will face range from various things such as symbols, objects, and keys, all of which need to be utilized to unlock doors and solve puzzles. The agent processes its surroundings by receiving image frames as input, from which it must learn to identify the various elements related to progression in the environment. After analyzing the input, the agent can choose to output a variety of actions, or combinations of actions, such as turning and moving. The success of the agent is measured based on the number of floors the agent can clear on average from each timestep.
 
