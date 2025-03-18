@@ -132,9 +132,10 @@ To deal with the sparse reward environment, we tried using ML agents’ implemen
 
 Curiosity rewards the agent through intrinsic rewards in addition to the extrinsic rewards by the environment to explore new states and actions. It involves an inverse model and a forward model. The inverse model tries to predict the action that occurred between the current observation and the next observation. The forward model tries to predict the next observation, given the current observation and action taken. The agent is rewarded based on how different the actual next observation is from the forward model’s predicted next observation.
 
+<div style="text-align:center"><img src="Intrinsic Curiosity Module Diagram.png" width="600" height="400"/></div>
+
 This allows the agent to explore the environment even when there isn’t a reward. However, the model performed worse than the other approaches, only reaching a mean reward of 1 at 3 million timesteps. The only advantage over the other approaches was a faster training time because the obstacle tower is a unity environment. 
 
-<div style="text-align:center"><img src="Intrinsic Curiosity Module Diagram.png" width="600" height="400"/></div>
 
 We chose the agent with an action space of 8 and hyperparameter tuning as our best approach because it had the highest mean reward and floor reached, showing that it was able to generalize to the procedurally generated tower.
 
