@@ -19,7 +19,7 @@ Stairway to Heaven is an AI agent that seeks to quickly and efficiently navigate
 ## Reports
 - [Proposal](https://mmynampati.github.io/Stairway-to-Heaven/proposal)
 - [Status Report](https://mmynampati.github.io/Stairway-to-Heaven/status)
-- [Final Report](final.html)
+- [Final Report](https://mmynampati.github.io/Stairway-to-Heaven/final)
 - [Team](https://mmynampati.github.io/Stairway-to-Heaven/team)
 
 
