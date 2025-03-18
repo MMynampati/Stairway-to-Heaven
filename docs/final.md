@@ -47,10 +47,11 @@ The first thing our team had to do was decide on what RL algorithm/algorithms we
 - Sparse rewards
 - Stochastic environment
 
-These factors combined meant that we would likely need a sample-efficient algorithm,  with the large state space and stochastic environment providing a lot of variability in terms of the data the model could train on. After some research we were able to narrow down to two algorithms that we felt could show good results.
+These factors combined meant that we would likely need a sample-efficient algorithm,  with the large state space and stochastic environment providing a lot of variability in terms of the data the model could train on. After some research we were able to narrow down to three algorithms that we felt could show good results.
 
 - Proximal Policy Optimization (PPO)
 - Advantage Actor Critic (A2C)
+- Hindsight Experience Replay (HER)
 
 After making this list, we ran a test simulation with the simplest implementation of each algorithm in the default environment to get a sense if any seemed better initially. The results from each algorithm were all about the same, barely even getting a mean reward of 0.2.
 
