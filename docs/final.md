@@ -116,7 +116,7 @@ These changes didn’t affect the training speed as much, but it collected more 
 
 ### Approach 5: Frame skipping and Framestacking
 
-We added a frame skipping parameter of 2 and a frame stacking of 4 on top of the previous approaches. For frame skipping, the agent only takes action every two frames and will return every 2nd frame. This means the agent will repeat an action for two frames and decreases the total training time because the agent doesn’t have to make a decision at every step. This would also help prevent the agent from getting stuck on walls since it could repeat turning away or moving back instead of choosing an action that would get it stuck again.
+We added a frame skipping parameter of 2 and a frame stacking of 4 on top of the previous approaches. For frame skipping, the agent only takes action every two frames and will return every 2nd frame. This means the agent will repeat an action for two frames and decrease the total training time because the agent doesn’t have to make a decision at every step. This would also help prevent the agent from getting stuck on walls since it could repeat turning away or moving back instead of choosing an action that would get it stuck again.
 
 Then, we combined/stacked the last 4 frames that weren’t skipped into a single observation. This gives the agent more information about the environment, such as movement and previous changes.
 
@@ -143,6 +143,17 @@ We chose the agent with an action space of 8 and hyperparameter tuning as our be
 
 ### Quantitative:
 We evaluated our trained agent by making it run through 5 tower seeds, 1001, 1002, 1003, 1004, 1005. We measured its performance by the average reward per episode during training, the average reward across the 5 seeds, the average floor reached, and the highest floor reached. As the episode mean reward increases by 1, it shows the agent being able to reach a higher floor because the agent is given a reward of 1 for passing a floor.
+
+#### Results from Evaluation Seeds
+|       Approach      | Average Reward | Average Floor Reached  |  Highest Floor Reached |
+|-----------------------------------------|------|-----|---|
+|  Fixed Environment                      | 0.7  | 0.6 | 1 | 
+|  Randomized Environment                 | 0.2  | 0.2 | 1 | 
+| Fixed Environment with 12 Actions       | 1.16 |  1  | 2 | 
+|  Randomized Environment with 12 Actions | 1.3  | 1.2 | 2 | 
+|  8 Actions                              | 1.36 | 1.2 | 2 | 
+| 8 Actions with Tuned Hyperparameter     | 3.62 | 2.8 | 4 | 
+|  Frame Skipping and Frame Stacking      | 2.14 | 1.8 | 3 |  
 
 #### Fixed Environment Agent:
 <div style="text-align:center"><img src="PPO_fixed_environment.png" width="550" height="290"/></div>
@@ -195,40 +206,40 @@ ML-Agents PPO with the curiosity module didn’t show the improvements we were e
 ### Qualitative:
 
 #### Untrained:
-<iframe width="560" height="315" src="https://youtu.be/3TaRs6ksSmY" frameborder="0" allowfullscreen></iframe>
+<iframe width="560" height="315" src="https://www.youtube.com/watch?v=3TaRs6ksSmY" frameborder="0" allowfullscreen></iframe>
 The untrained agent chooses actions randomly, resulting in it constantly jumping around in a circle and not making it far from the starting point. It doesn’t make any movements towards the exit.
 
 #### Fixed environment:
-<iframe width="560" height="315" src="https://youtu.be/RmkP0JfzhB8" frameborder="0" allowfullscreen></iframe>
+<iframe width="560" height="315" src="https://www.youtube.com/watch?v=RmkP0JfzhB8" frameborder="0" allowfullscreen></iframe>
 The agent trained on only one tower showed that it was learning by choosing movements that would help it move toward the exit instead of jumping around randomly. However, it starts to perform like an untrained agent, making random movements and getting stuck on walls when it doesn’t make any progress on the first floor. This shows it might be overfitting to the layout it was trained on and not adapting to different layouts.
 
 #### Randomized environment:
-<iframe width="560" height="315" src="https://youtu.be/gpOqPXZfvuE" frameborder="0" allowfullscreen></iframe>
+<iframe width="560" height="315" src="https://www.youtube.com/watch?v=gpOqPXZfvuE" frameborder="0" allowfullscreen></iframe>
 
 We randomized the environment to help the agent learn to generalize to new floor layouts but performed similarly to an untrained agent. It kept choosing random actions, jumping around, and not moving towards the exit. It wasn’t learning and exploring random actions because the agent had to choose the right action out of 54 possible choices. It would only make it out of floor 0 by luck.
 
 #### 12 Reduced Actions:
 
-<iframe width="560" height="315" src="https://youtu.be/Pu_LfMn3hiI" frameborder="0" allowfullscreen></iframe>
+<iframe width="560" height="315" src="https://www.youtube.com/watch?v=Pu_LfMn3hiI" frameborder="0" allowfullscreen></iframe>
 
 Reducing the action space showed the biggest improvement with the agent being able to sometimes reach the 2nd floor even on different tower seeds, showing it was generalizing to unseen layouts. The agent recognized doors leading to other rooms and the exit, heading straight for them. Limiting the actions to forward movements caused it to run into walls and doorways more often, having a harder time getting unstuck. Although it wasn’t jumping around in circles, the agent continued to jump when it was unnecessary.
 
 #### 8 Reduced Actions:
-<iframe width="560" height="315" src="https://youtu.be/9lGVpMPoMzw" frameborder="0" allowfullscreen></iframe>
+<iframe width="560" height="315" src="https://www.youtube.com/watch?v=9lGVpMPoMzw" frameborder="0" allowfullscreen></iframe>
 
 Reducing the actions further and adding backward movement fixed the issue of constantly jumping. It didn’t get stuck as often as having 12 actions. It continued running into walls until a door or exit appeared in its view where it would head straight for it. It would also move back to the start, confusing the starting point with the exit. Both reduced action spaces helped the agent consistently reach the first floor.
 
 #### 8 Reduced Action and Hyperparameter Tuning:
-<iframe width="560" height="315" src="https://youtu.be/UKS9ZXeDM0o" frameborder="0" allowfullscreen></iframe>
+<iframe width="560" height="315" src="https://www.youtube.com/watch?v=UKS9ZXeDM0o" frameborder="0" allowfullscreen></iframe>
 
 This was our best agent, consistently reaching the 2nd floor and being able to reach the 4th floor sometimes. It recognized doors and exits the fastest, learning to stop and turn the camera to find them as it trains for longer timesteps. It wasn’t running into walls as often as the previous approaches and could enter another room without getting stuck. It also learned to only jump when it is near a wall to reach a higher platform, reducing the time it takes to navigate rooms.
 
 We also observed the agent getting stuck on curbs. The lighting in the room caused the curbs to blend in with the floor so the agent didn’t jump over them and continued running into them instead.
 
 
-#### Frame stacking and Frame Skipping:
+#### Frame Stacking and Frame Skipping:
 
-<iframe width="560" height="315" src="https://youtu.be/cjfKfl8AHqU" frameborder="0" allowfullscreen></iframe>
+<iframe width="560" height="315" src="https://www.youtube.com/watch?v=cjfKfl8AHqU" frameborder="0" allowfullscreen></iframe>
 
 This agent was slower in exploring rooms than the previous approach. It kept moving around in the same room even when the agent was right next to a door, taking a few seconds before moving through the door or turning away. The agent’s movement was less erratic with it making decisions every two frames instead of every frame. This helped it move away from walls.
 
