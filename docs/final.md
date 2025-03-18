@@ -140,6 +140,7 @@ We chose the agent with an action space of 8 and hyperparameter tuning as our be
 
 
 ## Evaluation
+
 ### Quantitative:
 We evaluated our trained agent by making it run through 5 tower seeds, 1001, 1002, 1003, 1004, 1005. We measured its performance by the average reward per episode during training, the average reward across the 5 seeds, the average floor reached, and the highest floor reached. As the episode mean reward increases by 1, it shows the agent being able to reach a higher floor because the agent is given a reward of 1 for passing a floor.
 
