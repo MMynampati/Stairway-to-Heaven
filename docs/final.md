@@ -54,7 +54,7 @@ These factors combined meant that we would likely need a sample-efficient algori
 
 After making this list, we ran a test simulation with the simplest implementation of each algorithm in the default environment to get a sense if any seemed better initially. The results from each algorithm were all about the same, barely even getting a mean reward of 0.2.
 
-### Approach 1:
+### Approach 1: Default PPO on Randomized and Fixed Environment
 
 We eventually settled on Stable Baselines3’s implementation of PPO with the default hyperparameters. PPO collects experiences and compares how much the new policy has changed from the old policy. It clips this probability ratio to keep it within a certain range. Then it takes the minimum of the clipped and unclipped values, making small policy updates and preventing instability. With the vast state and action spaces, we felt that PPO struck a good balance between exploration and stability. This and the fact that from our reading it seemed that PPO works well with ICM, which we would go on to experiment with later.
 
@@ -70,7 +70,7 @@ When watching both agents go through the tower, both would often perform random 
 
 To help the agent learn and explore more efficiently, we experimented with reducing the number of actions the agent can choose to lower the complexity. We reduced the actions to only moving forward, turning the camera, and jumping, bringing the action space to 12 combinations
 
-### New Action space:
+#### New Action space:
 - Movement (No-Action, Forward)
 - Movement (No-Action)
 - Camera Rotation (No-Action, Clockwise, Counter-Clockwise)
@@ -86,7 +86,7 @@ However, reducing the number of actions caused the agent to often get stuck on w
 
 Reducing the action space to 12 actions had a large impact on the agent’s ability to learn so we reduced it further to 8 actions to see if there would be further improvements. 
 
-### New Action space:
+#### New Action space:
 - No actions
 - Forward
 - Backward
@@ -104,7 +104,8 @@ Although reducing to 8 actions didn’t provide significant improvement to the a
 ### Approach 4: Hyperparameter Tuning
 
 Next, we focused on optimizing the hyperparameters of PPO to improve performance.
-Hyperparameters:
+
+#### Hyperparameters:
 - n_steps = 512
 - n_epochs = 8
 - ent_coef = 0.001
@@ -122,16 +123,120 @@ Then, we combined/stacked the last 4 frames that weren’t skipped into a single
 - Old Observation Space: (3, 84, 84)
 - New Observation Space: (12, 84, 84)
 
-<div style="text-align:center"><img src="PPO_fixed_environment.png" width="450" height="290"/></div>
+<div style="text-align:center"><img src="Frame skipping.png" width="500" height="300"/></div>
+
+We chose to not use this approach because it didn’t offer any substantial improvements over just reducing the action space and changing the hyperparameters. It took twice as long to reach the same timestep and mean reward. The observation space is increased and the agent has to process four frames instead of just one, slowing down the training speed.
+
+### Approach 6: MLAgents PPO + Curiosity
+To deal with the sparse reward environment, we tried using ML agents’ implementation of PPO, from Unity,  with the Intrinsic Curiosity Module to encourage the agent to explore new states. 
+
+Curiosity rewards the agent through intrinsic rewards in addition to the extrinsic rewards by the environment to explore new states and actions. It involves an inverse model and a forward model. The inverse model tries to predict the action that occurred between the current observation and the next observation. The forward model tries to predict the next observation, given the current observation and action taken. The agent is rewarded based on how different the actual next observation is from the forward model’s predicted next observation.
+
+This allows the agent to explore the environment even when there isn’t a reward. However, the model performed worse than the other approaches, only reaching a mean reward of 1 at 3 million timesteps. The only advantage over the other approaches was a faster training time because the obstacle tower is a unity environment. 
+
+<div style="text-align:center"><img src="Intrinsic Curiosity Module Diagram.png" width="600" height="400"/></div>
+
+We chose the agent with an action space of 8 and hyperparameter tuning as our best approach because it had the highest mean reward and floor reached, showing that it was able to generalize to the procedurally generated tower.
 
 
 ## Evaluation
+### Quantitative:
+We evaluated our trained agent by making it run through 5 tower seeds, 1001, 1002, 1003, 1004, 1005. We measured its performance by the average reward per episode during training, the average reward across the 5 seeds, the average floor reached, and the highest floor reached. As the episode mean reward increases by 1, it shows the agent being able to reach a higher floor because the agent is given a reward of 1 for passing a floor.
+
+#### Fixed Environment Agent:
+<div style="text-align:center"><img src="PPO_fixed_environment.png" width="550" height="290"/></div>
+
+In a fixed environment, the agent showed that it was able to choose the best actions for that specific tower seed and was able to progress further than the agent in a randomized environment. The table, of the results evaluating each approach across five tower seeds, showed that it was also able to adapt better to environments it hadn’t seen before, with a higher average reward and average floor reached compared to the randomized tower agent.
+
+
+#### Randomized Environment Agent:
+<div style="text-align:center"><img src="PPO_random_environment.png" width="550" height="290"/></div>
+
+In the randomized environment, the agent struggles to generalize to the different environments. It’s not learning and is unable to consistently reach the first floor as shown by the mean reward being below 1. It is only sometimes able to reach the exit of floor 0, performing the same as an untrained agent. We stopped the training early since the reward kept fluctuating up and down without any significant improvements.
+
+
+#### 12 Actions:
+
+##### Fixed Environment:
+<div style="text-align:center"><img src="12 reduced actions fixed environment.png" width="550" height="290"/></div>
+
+##### Randomized Environment:
+<div style="text-align:center"><img src="12 reduced actions random environment.png" width="550" height="290"/></div>
+
+As shown in the graphs above, reducing the action space greatly improved the performance of the agent, with the reward increasing the most at steps 100,000 to 400,000. Both the fixed agent and randomized tower agent had their average episode reward increased by one, with the fixed agent reaching two floors and the randomized agent reaching floor one. Both were also able to reach a max floor of 2 as shown by the evaluation results.
+
+Despite the fixed agent having a higher episode mean reward than the randomized tower agent, the results from the 5 evaluated towers showed the randomized agent having a similar average reward score and average floor reached. This shows the fixed agent not being able to generalize well after reaching floor 1, while the other agent performs better by having more variations in its experience.
+
+
+#### 8 Actions:
+<div style="text-align:center"><img src="8 reduced actions.png" width="550" height="290"/></div>
+Reducing the action space to 8 actions showed little improvement in the rewards with the episode reward mean around 1.4-1.5 and the evaluated average reward increasing by only 0.06. Compared to 12 actions, the agent trained faster with a 10-minute difference, making it the better option. Improvements can still be made since both 12 actions and 8 actions started to plateau at around 1.2 million timesteps.
+
+
+#### 8 Actions with Hyperparameter Tuning:
+<div style="text-align:center"><img src="tuned 8 reduced actions.png" width="550" height="290"/></div>
+
+We changed the hyperparameters with the entropy coefficient having the most impact. Unlike the previous approaches, the reward slowly increased to a max of 2.5 instead of plateauing. Changing the entropy coefficient to 0.001 helped the agent explore new actions instead of converging to an early solution. When looking at results from the 5 tower seeds, tuning the parameters more than doubled the average reward and average floor reached. It also reached floor 4, making it the best agent we have, compared to the other approaches only reaching the 2nd floor.
+
+The training wasn’t as stable as the others with drops in the reward throughout the graph because of the lowered n_steps parameter causing frequent updates with fewer samples. The training also slows down around the second floor because the rooms get more complex with raised platforms and the exit being further away.
+
+#### Frame Skipping and Frame Stacking:
+<div style="text-align:center"><img src="Frame Skipping and Frame Stacking Graph.png" width="550" height="290"/></div>
+We added frame skipping and frame stacking to improve the agent further because it started improving by small increments after 4.5 million timesteps. Instead of improving the reward, it showed a slight decrease in the episode mean reward. When running it through the 5 tower seeds, the average reward dropped from 3.62 to 2.14 and wasn’t consistently reaching the 2nd floor with only an average floor reached of 1.8. The training time doubled, taking an extra hour to reach the same timestep. This was likely caused by the observation space increasing by four image frames, making the agent take longer to process the input.
+
+Given the decrease in performance and the increased training time, we didn’t continue training the agent with frame skipping and frame stacking.
+
+#### Intrinsic Curiosity Module (ICM):
+<div style="text-align:center"><img src="Curiosity Graph.png" width="550" height="290"/></div>
+
+ML-Agents PPO with the curiosity module didn’t show the improvements we were expecting. The other approaches were able to reach an episode mean reward of 1 at around 500,000 timesteps whereas the curiosity approach took 1 million timesteps. The other approaches had an episode reward above 1 while even after 3 million timesteps, it only hovered around a reward of 1. This low performance could be caused by not tuning the hyperparameters.
+
+### Qualitative:
+
+#### Untrained:
+<iframe width="560" height="315" src="https://youtu.be/3TaRs6ksSmY" frameborder="0" allowfullscreen></iframe>
+The untrained agent chooses actions randomly, resulting in it constantly jumping around in a circle and not making it far from the starting point. It doesn’t make any movements towards the exit.
+
+#### Fixed environment:
+<iframe width="560" height="315" src="https://youtu.be/RmkP0JfzhB8" frameborder="0" allowfullscreen></iframe>
+The agent trained on only one tower showed that it was learning by choosing movements that would help it move toward the exit instead of jumping around randomly. However, it starts to perform like an untrained agent, making random movements and getting stuck on walls when it doesn’t make any progress on the first floor. This shows it might be overfitting to the layout it was trained on and not adapting to different layouts.
+
+#### Randomized environment:
+<iframe width="560" height="315" src="https://youtu.be/gpOqPXZfvuE" frameborder="0" allowfullscreen></iframe>
+
+We randomized the environment to help the agent learn to generalize to new floor layouts but performed similarly to an untrained agent. It kept choosing random actions, jumping around, and not moving towards the exit. It wasn’t learning and exploring random actions because the agent had to choose the right action out of 54 possible choices. It would only make it out of floor 0 by luck.
+
+#### 12 Reduced Actions:
+
+<iframe width="560" height="315" src="https://youtu.be/Pu_LfMn3hiI" frameborder="0" allowfullscreen></iframe>
+
+Reducing the action space showed the biggest improvement with the agent being able to sometimes reach the 2nd floor even on different tower seeds, showing it was generalizing to unseen layouts. The agent recognized doors leading to other rooms and the exit, heading straight for them. Limiting the actions to forward movements caused it to run into walls and doorways more often, having a harder time getting unstuck. Although it wasn’t jumping around in circles, the agent continued to jump when it was unnecessary.
+
+#### 8 Reduced Actions:
+<iframe width="560" height="315" src="https://youtu.be/9lGVpMPoMzw" frameborder="0" allowfullscreen></iframe>
+
+Reducing the actions further and adding backward movement fixed the issue of constantly jumping. It didn’t get stuck as often as having 12 actions. It continued running into walls until a door or exit appeared in its view where it would head straight for it. It would also move back to the start, confusing the starting point with the exit. Both reduced action spaces helped the agent consistently reach the first floor.
+
+#### 8 Reduced Action and Hyperparameter Tuning:
+<iframe width="560" height="315" src="https://youtu.be/UKS9ZXeDM0o" frameborder="0" allowfullscreen></iframe>
+
+This was our best agent, consistently reaching the 2nd floor and being able to reach the 4th floor sometimes. It recognized doors and exits the fastest, learning to stop and turn the camera to find them as it trains for longer timesteps. It wasn’t running into walls as often as the previous approaches and could enter another room without getting stuck. It also learned to only jump when it is near a wall to reach a higher platform, reducing the time it takes to navigate rooms.
+
+We also observed the agent getting stuck on curbs. The lighting in the room caused the curbs to blend in with the floor so the agent didn’t jump over them and continued running into them instead.
+
+
+#### Frame stacking and Frame Skipping:
+
+<iframe width="560" height="315" src="https://youtu.be/cjfKfl8AHqU" frameborder="0" allowfullscreen></iframe>
+
+This agent was slower in exploring rooms than the previous approach. It kept moving around in the same room even when the agent was right next to a door, taking a few seconds before moving through the door or turning away. The agent’s movement was less erratic with it making decisions every two frames instead of every frame. This helped it move away from walls.
 
 
 ## References
 **PPO Algorithm**
 - [Stable Baselines3 PPO Algorithm](https://stable-baselines3.readthedocs.io/en/v1.7.0/modules/ppo.html)
 - [Original Proximal Policy Optimization Algorithms Paper](https://arxiv.org/abs/1707.06347)
+- [Improving Generalization](https://arxiv.org/abs/1907.06704)
 
 **Obstacle Tower**
 - [Obstacle Tower Environment](https://github.com/Unity-Technologies/obstacle-tower-env)
@@ -146,7 +251,12 @@ Then, we combined/stacked the last 4 frames that weren’t skipped into a single
 
 **Frame Skipping**
 - [Frame Skipping Explaination](https://danieltakeshi.github.io/2016/11/25/frame-skipping-and-preprocessing-for-deep-q-networks-on-atari-2600-games/)
+- [Frame Skipping Implementation](https://github.com/compsciencelab/pytorchrl/blob/master/pytorchrl/envs/common.py)
 
 ## AI Tool Usage
 
 Used ChatGPT to help troubleshoot installing and setting up the environment because of compatibility errors
+
+<a href="https://mmynampati.github.io/Stairway-to-Heaven/" style="background-color: #4CAF50; color: white; padding: 10px 20px; border-radius: 5px; text-decoration: none; display: inline-block;">
+  Return to Main Page
+</a>
