@@ -14,3 +14,7 @@ title:  Team
 
 ## Alec David Rutledge
 ***UCI Net ID***: adrutled
+
+<a href="https://mmynampati.github.io/Stairway-to-Heaven/" style="background-color: #4CAF50; color: white; padding: 10px 20px; border-radius: 5px; text-decoration: none; display: inline-block;">
+  Return to Main Page
+</a>
