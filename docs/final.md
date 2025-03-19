@@ -4,7 +4,7 @@ title: Final Report
 ---
 
 ## Video
-
+https://youtu.be/i_j0A2slDO4
 
 ## Project Summary
 The goal of our project is to train an agent that can navigate rooms to progress through as many floors as possible in a procedurally generated obstacle tower. Each floor will become increasingly difficult as the agent goes up the tower. Each tower is randomized with every floor having a different floor layout so the agent will have to learn to generalize to new obstacles and changes in the environment, such as locked doors, dead ends, and puzzles to progress. Due to the environment being random and partially observable, the agent can’t rely on brute force, pathfinding algorithms, or memorizing the floor layouts to find the exit. It doesn’t have any information about the floor layout and where the exit is located besides the images from what the player model sees as input.
