@@ -17,12 +17,14 @@ The agent processes its environment by receiving 84x84 pixel image frames, which
 ### Observation Space:
 The agent takes in an 84 x 84 RGB image for its observation and is processed with a convolutional neural network (CNN). The image includes how much time remains and the number of keys possessed.
 
+<div style="text-align:center"><img src="agent_observation.png" width="450" height="450"/></div>
+
 Since the environment is partially observable, the agent doesn’t have any prior knowledge about the floor layout when it enters a floor. It doesn’t receive the positions of the exit, doors, or keys so it has to rely on its visual input to navigate each floor.
+
+### Action Space:
 
 The agent has a multi-discrete action space consisting of four groups of actions. These action branches are flattened into a discrete action space with 54 actions. Each action the agent chooses represents a combination of the moves below.
 
-
-### Action Space:
 - Movement (No-Action, Forward, Back)
 - Movement (No-Action, Right, Left)
 - Camera Rotation (No-Action, Clockwise, Counter-Clockwise)
@@ -31,9 +33,9 @@ The agent has a multi-discrete action space consisting of four groups of actions
 
 Ex.: The action, [1, 0, 1, 1], causes the agent to move forward, turn the camera to the right, and jump simultaneously.
 
+### Rewards:
 The obstacle tower is a sparse reward environment with the agent not receiving a reward most of the time for a given state.
 
-### Rewards:
 - +1 Agent completing a floor
 - +0.1 Opening a door
 - +0.1 Solving a puzzle
