@@ -61,6 +61,7 @@ After making this list, we ran a test simulation with the simplest implementatio
 ### Approach 1: Default PPO on Randomized and Fixed Environment
 
 We eventually settled on Stable Baselines3’s implementation of PPO with the default hyperparameters. PPO collects experiences and compares how much the new policy has changed from the old policy. It clips this probability ratio to keep it within a certain range. Then it takes the minimum of the clipped and unclipped values, making small policy updates and preventing instability. With the vast state and action spaces, we felt that PPO struck a good balance between exploration and stability. This and the fact that from our reading it seemed that PPO works well with ICM, which we would go on to experiment with later.
+<div style="text-align:center"><img src="ppo_objective_function.png" width="500" height="200"/></div>
 
 As our baseline, we trained the agent with a random tower and a different layout in each episode to see how well it would perform without any changes made to the parameters and the environment. Then, we trained another agent on a single/fixed version of the obstacle tower, where the layout doesn’t change.
 
@@ -122,7 +123,7 @@ These changes didn’t affect the training speed as much, but it collected more 
 
 We added a frame skipping parameter of 2 and a frame stacking of 4 on top of the previous approaches. For frame skipping, the agent only takes action every two frames and will return every 2nd frame. This means the agent will repeat an action for two frames and decrease the total training time because the agent doesn’t have to make a decision at every step. This would also help prevent the agent from getting stuck on walls since it could repeat turning away or moving back instead of choosing an action that would get it stuck again.
 
-Then, we combined/stacked the last 4 frames that weren’t skipped into a single observation. This gives the agent more information about the environment, such as movement and previous changes.
+Then, we combined/stacked the last 4 frames that weren’t skipped into a single observation. In our previous approach, when a door or exit is no longer in view or out of frame, the agent acts like it never saw it in the first place. This causes it to continue searching again by choosing random actions until it sees a door again. By passing in the previous states, the agent is given more information about the environment, such as direction, changes in the environment, and if it saw a door.
 
 - Old Observation Space: (3, 84, 84)
 - New Observation Space: (12, 84, 84)
@@ -138,7 +139,7 @@ Curiosity rewards the agent through intrinsic rewards in addition to the extrins
 
 <div style="text-align:center"><img src="Intrinsic Curiosity Module Diagram.png" width="600" height="400"/></div>
 
-This allows the agent to explore the environment even when there isn’t a reward. However, the model performed worse than the other approaches, only reaching a mean reward of 1 at 3 million timesteps. The only advantage over the other approaches was a faster training time because the obstacle tower is a unity environment. 
+This allows the agent to explore the environment even when there isn’t a reward. However, the model performed worse than the other approaches, only reaching a mean reward of 1 at 3 million timesteps. The only advantage over the other approaches was a faster training time because the obstacle tower is a unity environment. A future goal would be to implement our own ICM to use our modified environment. When training, it kept using the standalone environment game executable so the environment didn't include the reduced action space.
 
 
 We chose the agent with an action space of 8 and hyperparameter tuning as our best approach because it had the highest mean reward and floor reached, showing that it was able to generalize to the procedurally generated tower.
@@ -207,7 +208,7 @@ Given the decrease in performance and the increased training time, we didn’t c
 #### Intrinsic Curiosity Module (ICM):
 <div style="text-align:center"><img src="Curiosity Graph.png" width="550" height="290"/></div>
 
-ML-Agents PPO with the curiosity module didn’t show the improvements we were expecting. The other approaches were able to reach an episode mean reward of 1 at around 500,000 timesteps whereas the curiosity approach took 1 million timesteps. The other approaches had an episode reward above 1 while even after 3 million timesteps, it only hovered around a reward of 1. This low performance could be caused by not tuning the hyperparameters.
+ML-Agents PPO with the curiosity module didn’t show the improvements we were expecting. The other approaches were able to reach an episode mean reward of 1 at around 500,000 timesteps whereas the curiosity approach took 1 million timesteps. The other approaches had an episode reward above 1 while even after 3 million timesteps, it only hovered around a reward of 1. Although it performed better than the baseline agent on random environments, it was lacking in rewards compared to the other approaches.
 
 ### Qualitative:
 
